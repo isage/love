@@ -380,7 +380,9 @@ void socket_setnonblocking(p_socket ps) {
 int socket_gethostbyaddr(const char *addr, socklen_t len, struct hostent **hp) {
     *hp = gethostbyaddr(addr, len, AF_INET);
     if (*hp) return IO_DONE;
+#ifndef __vita__
     else if (h_errno) return h_errno;
+#endif
     else if (errno) return errno;
     else return IO_UNKNOWN;
 }
@@ -388,7 +390,9 @@ int socket_gethostbyaddr(const char *addr, socklen_t len, struct hostent **hp) {
 int socket_gethostbyname(const char *addr, struct hostent **hp) {
     *hp = gethostbyname(addr);
     if (*hp) return IO_DONE;
+#ifndef __vita__
     else if (h_errno) return h_errno;
+#endif
     else if (errno) return errno;
     else return IO_UNKNOWN;
 }
@@ -400,8 +404,12 @@ int socket_gethostbyname(const char *addr, struct hostent **hp) {
 const char *socket_hoststrerror(int err) {
     if (err <= 0) return io_strerror(err);
     switch (err) {
+#ifndef __vita__
         case HOST_NOT_FOUND: return PIE_HOST_NOT_FOUND;
         default: return hstrerror(err);
+#else
+        default: return strerror(err);
+#endif
     }
 }
 

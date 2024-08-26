@@ -13,7 +13,9 @@
 #include "socket.h"
 #include "options.h"
 #include "unix.h"
+#ifndef __vita__
 #include <sys/un.h>
+#endif
 
 #define UNIXUDP_DATAGRAMSIZE 8192
 
@@ -126,6 +128,11 @@ static int meth_send(lua_State *L)
 \*-------------------------------------------------------------------------*/
 static int meth_sendto(lua_State *L)
 {
+#ifdef __vita__
+    lua_pushnil(L);
+    lua_pushstring(L, unixudp_strerror(ENOSYS));
+    return 2;
+#else
     p_unix un = (p_unix) auxiliar_checkclass(L, "unixudp{unconnected}", 1);
     size_t count, sent = 0;
     const char *data = luaL_checklstring(L, 2, &count);
@@ -160,6 +167,7 @@ static int meth_sendto(lua_State *L)
     }
     lua_pushnumber(L, (lua_Number) sent);
     return 1;
+#endif
 }
 
 static int meth_receive(lua_State *L) {
@@ -192,6 +200,11 @@ static int meth_receive(lua_State *L) {
 * Receives data and sender from a UDP socket
 \*-------------------------------------------------------------------------*/
 static int meth_receivefrom(lua_State *L) {
+#ifdef __vita__
+    lua_pushnil(L);
+    lua_pushstring(L, unixudp_strerror(ENOSYS));
+    return 2;
+#else
     p_unix un = (p_unix) auxiliar_checkclass(L, "unixudp{unconnected}", 1);
     char buf[UNIXUDP_DATAGRAMSIZE];
     size_t got, wanted = (size_t) luaL_optnumber(L, 2, sizeof(buf));
@@ -221,6 +234,7 @@ static int meth_receivefrom(lua_State *L) {
     lua_pushstring(L, addr.sun_path);
     if (wanted > sizeof(buf)) free(dgram);
     return 2;
+#endif
 }
 
 /*-------------------------------------------------------------------------*\
@@ -258,6 +272,9 @@ static int meth_dirty(lua_State *L) {
 * Binds an object to an address
 \*-------------------------------------------------------------------------*/
 static const char *unixudp_trybind(p_unix un, const char *path) {
+#ifdef __vita__
+    return unixudp_strerror(ENOSYS);
+#else
     struct sockaddr_un local;
     size_t len = strlen(path);
     int err;
@@ -276,6 +293,7 @@ static const char *unixudp_trybind(p_unix un, const char *path) {
 #endif
     if (err != IO_DONE) socket_destroy(&un->sock);
     return socket_strerror(err);
+#endif
 }
 
 static int meth_bind(lua_State *L)
@@ -294,6 +312,11 @@ static int meth_bind(lua_State *L)
 
 static int meth_getsockname(lua_State *L)
 {
+#ifdef __vita__
+    lua_pushnil(L);
+    lua_pushstring(L, socket_strerror(ENOSYS));
+    return 2;
+#else
     p_unix un = (p_unix) auxiliar_checkgroup(L, "unixudp{any}", 1);
     struct sockaddr_un peer = {0};
     socklen_t peer_len = sizeof(peer);
@@ -306,6 +329,7 @@ static int meth_getsockname(lua_State *L)
 
     lua_pushstring(L, peer.sun_path);
     return 1;
+#endif
 }
 
 /*-------------------------------------------------------------------------*\
@@ -313,6 +337,9 @@ static int meth_getsockname(lua_State *L)
 \*-------------------------------------------------------------------------*/
 static const char *unixudp_tryconnect(p_unix un, const char *path)
 {
+#ifdef __vita__
+    return socket_strerror(ENOSYS);
+#else
     struct sockaddr_un remote;
     int err;
     size_t len = strlen(path);
@@ -331,6 +358,7 @@ static const char *unixudp_tryconnect(p_unix un, const char *path)
 #endif
     if (err != IO_DONE) socket_destroy(&un->sock);
     return socket_strerror(err);
+#endif
 }
 
 static int meth_connect(lua_State *L)

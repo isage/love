@@ -534,6 +534,8 @@ std::string Filesystem::getAppdataDirectory()
 		appdata = normalize(udir);
 #elif defined(LOVE_IOS)
 		appdata = normalize(love::ios::getAppdataDirectory());
+#elif defined(__vita__)
+		appdata = normalize(std::string(getUserDirectory()) + "/love2d/");
 #elif defined(LOVE_LINUX)
 		char *xdgdatahome = getenv("XDG_DATA_HOME");
 		if (!xdgdatahome)

@@ -106,7 +106,7 @@ bool DroppedFile::isOpen() const
 
 int64 DroppedFile::getSize()
 {
-	int fd = file ? fileno(file) : -1;
+	int fd = -1;//file ? fileno(file) : -1;
 
 #ifdef LOVE_WINDOWS
 	
@@ -193,7 +193,7 @@ int64 DroppedFile::tell()
 #ifdef LOVE_WINDOWS
 	return (int64) _ftelli64(file);
 #else
-	return (int64) ftello(file);
+	return (int64) ftell(file);
 #endif
 }
 
@@ -205,7 +205,7 @@ bool DroppedFile::seek(uint64 pos)
 #ifdef LOVE_WINDOWS
 	return _fseeki64(file, (int64) pos, SEEK_SET) == 0;
 #else
-	return fseeko(file, (off_t) pos, SEEK_SET) == 0;
+	return fseek(file, pos, SEEK_SET) == 0;
 #endif
 }
 

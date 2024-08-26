@@ -120,7 +120,7 @@ bool System::openURL(const std::string &url) const
 #ifdef LOVE_HAS_POSIX_SPAWN
 	// Note: at the moment this process inherits our file descriptors.
 	// Note: the below const_cast is really ugly as well.
-	if (posix_spawnp(&pid, "xdg-open", nullptr, nullptr, const_cast<char **>(argv), environ) != 0)
+//	if (posix_spawnp(&pid, "xdg-open", nullptr, nullptr, const_cast<char **>(argv), environ) != 0)
 		return false;
 #else
 	pid = fork();
@@ -133,9 +133,9 @@ bool System::openURL(const std::string &url) const
 
 	// Check if xdg-open already completed (or failed.)
 	int status = 0;
-	if (waitpid(pid, &status, WNOHANG) > 0)
-		return (status == 0);
-	else
+//	if (waitpid(pid, &status, WNOHANG) > 0)
+//		return (status == 0);
+//	else
 		// We can't tell what actually happens without waiting for
 		// the process to finish, which could take forever (literally).
 		return true;

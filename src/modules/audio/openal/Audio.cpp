@@ -123,6 +123,11 @@ Audio::Audio()
 
 #ifdef ALC_EXT_EFX
 		ALint attribs[4] = { ALC_MAX_AUXILIARY_SENDS, MAX_SOURCE_EFFECTS, 0, 0 };
+#elif defined(__vita__)
+		ALint attribs[4] = {
+			ALC_FREQUENCY, 11025,
+			0, 0
+		};
 #else
 		ALint *attribs = nullptr;
 #endif

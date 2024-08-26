@@ -162,14 +162,20 @@ static sigset_t oldset;
 
 void disableSignals()
 {
+#if defined(__vita__)
+#else
 	sigset_t newset;
 	sigfillset(&newset);
 	pthread_sigmask(SIG_SETMASK, &newset, &oldset);
+#endif
 }
 
 void reenableSignals()
 {
+#if defined(__vita__)
+#else
 	pthread_sigmask(SIG_SETMASK, &oldset, nullptr);
+#endif
 }
 #endif
 

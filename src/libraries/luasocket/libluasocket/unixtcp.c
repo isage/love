@@ -12,8 +12,9 @@
 #include "socket.h"
 #include "options.h"
 #include "unixtcp.h"
+#ifndef __vita__
 #include <sys/un.h>
-
+#endif
 /*=========================================================================*\
 * Internal function prototypes
 \*=========================================================================*/
@@ -184,6 +185,9 @@ static int meth_accept(lua_State *L) {
 * Binds an object to an address
 \*-------------------------------------------------------------------------*/
 static const char *unixtcp_trybind(p_unix un, const char *path) {
+#ifdef __vita__
+    return socket_strerror(ENOSYS);
+#else
     struct sockaddr_un local;
     size_t len = strlen(path);
     int err;
@@ -202,6 +206,7 @@ static const char *unixtcp_trybind(p_unix un, const char *path) {
 #endif
     if (err != IO_DONE) socket_destroy(&un->sock);
     return socket_strerror(err);
+#endif
 }
 
 static int meth_bind(lua_State *L) {
@@ -219,6 +224,11 @@ static int meth_bind(lua_State *L) {
 
 static int meth_getsockname(lua_State *L)
 {
+#ifdef __vita__
+    lua_pushnil(L);
+    lua_pushstring(L, socket_strerror(ENOSYS));
+    return 2;
+#else
     p_unix un = (p_unix) auxiliar_checkgroup(L, "unixtcp{any}", 1);
     struct sockaddr_un peer = {0};
     socklen_t peer_len = sizeof(peer);
@@ -231,6 +241,7 @@ static int meth_getsockname(lua_State *L)
 
     lua_pushstring(L, peer.sun_path);
     return 1;
+#endif
 }
 
 /*-------------------------------------------------------------------------*\
@@ -238,6 +249,9 @@ static int meth_getsockname(lua_State *L)
 \*-------------------------------------------------------------------------*/
 static const char *unixtcp_tryconnect(p_unix un, const char *path)
 {
+#ifdef __vita__
+    return socket_strerror(ENOSYS);
+#else
     struct sockaddr_un remote;
     int err;
     size_t len = strlen(path);
@@ -256,6 +270,7 @@ static const char *unixtcp_tryconnect(p_unix un, const char *path)
 #endif
     if (err != IO_DONE) socket_destroy(&un->sock);
     return socket_strerror(err);
+#endif
 }
 
 static int meth_connect(lua_State *L)

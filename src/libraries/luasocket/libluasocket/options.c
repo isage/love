@@ -122,22 +122,38 @@ int opt_get_broadcast(lua_State *L, p_socket ps)
 
 int opt_set_ip6_unicast_hops(lua_State *L, p_socket ps)
 {
+#ifdef __vita__
+  return 0;
+#else
   return opt_setint(L, ps, IPPROTO_IPV6, IPV6_UNICAST_HOPS);
+#endif
 }
 
 int opt_get_ip6_unicast_hops(lua_State *L, p_socket ps)
 {
+#ifdef __vita__
+  return 0;
+#else
   return opt_getint(L, ps, IPPROTO_IPV6, IPV6_UNICAST_HOPS);
+#endif
 }
 
 int opt_set_ip6_multicast_hops(lua_State *L, p_socket ps)
 {
+#ifdef __vita__
+  return 0;
+#else
   return opt_setint(L, ps, IPPROTO_IPV6, IPV6_MULTICAST_HOPS);
+#endif
 }
 
 int opt_get_ip6_multicast_hops(lua_State *L, p_socket ps)
 {
+#ifdef __vita__
+  return 0;
+#else
   return opt_getint(L, ps, IPPROTO_IPV6, IPV6_MULTICAST_HOPS);
+#endif
 }
 
 int opt_set_ip_multicast_loop(lua_State *L, p_socket ps)
@@ -152,12 +168,20 @@ int opt_get_ip_multicast_loop(lua_State *L, p_socket ps)
 
 int opt_set_ip6_multicast_loop(lua_State *L, p_socket ps)
 {
+#ifdef __vita__
+  return 0;
+#else
     return opt_setboolean(L, ps, IPPROTO_IPV6, IPV6_MULTICAST_LOOP);
+#endif
 }
 
 int opt_get_ip6_multicast_loop(lua_State *L, p_socket ps)
 {
+#ifdef __vita__
+  return 0;
+#else
     return opt_getboolean(L, ps, IPPROTO_IPV6, IPV6_MULTICAST_LOOP);
+#endif
 }
 
 int opt_set_linger(lua_State *L, p_socket ps)
@@ -233,22 +257,38 @@ int opt_set_ip_drop_membersip(lua_State *L, p_socket ps)
 
 int opt_set_ip6_add_membership(lua_State *L, p_socket ps)
 {
+#ifdef __vita__
+    return 0;
+#else
     return opt_ip6_setmembership(L, ps, IPPROTO_IPV6, IPV6_ADD_MEMBERSHIP);
+#endif
 }
 
 int opt_set_ip6_drop_membersip(lua_State *L, p_socket ps)
 {
+#ifdef __vita__
+    return 0;
+#else
     return opt_ip6_setmembership(L, ps, IPPROTO_IPV6, IPV6_DROP_MEMBERSHIP);
+#endif
 }
 
 int opt_get_ip6_v6only(lua_State *L, p_socket ps)
 {
+#ifdef __vita__
+    return 0;
+#else
     return opt_getboolean(L, ps, IPPROTO_IPV6, IPV6_V6ONLY);
+#endif
 }
 
 int opt_set_ip6_v6only(lua_State *L, p_socket ps)
 {
+#ifdef __vita__
+    return 0;
+#else
     return opt_setboolean(L, ps, IPPROTO_IPV6, IPV6_V6ONLY);
+#endif
 }
 
 /*=========================================================================*\
@@ -277,6 +317,9 @@ static int opt_setmembership(lua_State *L, p_socket ps, int level, int name)
 
 static int opt_ip6_setmembership(lua_State *L, p_socket ps, int level, int name)
 {
+#ifdef __vita__
+    return 0;
+#else
     struct ipv6_mreq val;                   /* obj, opt-name, table */
     memset(&val, 0, sizeof(val));
     if (!lua_istable(L, 3)) auxiliar_typeerror(L,3,lua_typename(L, LUA_TTABLE));
@@ -299,6 +342,7 @@ static int opt_ip6_setmembership(lua_State *L, p_socket ps, int level, int name)
           luaL_argerror(L, -1, "number 'interface' field expected");
     }
     return opt_set(L, ps, level, name, (char *) &val, sizeof(val));
+#endif
 }
 
 static

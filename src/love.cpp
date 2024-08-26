@@ -25,6 +25,9 @@
 
 #ifdef LOVE_BUILD_EXE
 
+int _newlib_heap_size_user   = 200 * 1024 * 1024;
+unsigned int sceLibcHeapSize = 32 * 1024 * 1024;
+
 // Lua
 extern "C" {
 	#include <lua.h>
@@ -124,6 +127,39 @@ static void get_app_arguments(int argc, char **argv, int &new_argc, char **&new_
 
 #endif // LOVE_LEGENDARY_APP_ARGV_HACK
 
+#ifdef __vita__
+
+#include <vector>
+
+static void set_app_arguments(int argc, char **argv, int &new_argc, char **&new_argv)
+{
+	std::vector<std::string> temp_argv;
+	for (int i = 0; i < argc; i++)
+	{
+		// Don't copy -psn_xxx argument from argv.
+		if (i == 0 || strncmp(argv[i], "-psn_", 5) != 0)
+			temp_argv.push_back(std::string(argv[i]));
+	}
+
+	std::vector<std::string>::iterator it = temp_argv.begin();
+	it = temp_argv.insert(it + 1, "--game");
+	it = temp_argv.insert(it + 1, "game.love");
+
+	// Copy temp argv vector to new argv array.
+	new_argc = (int) temp_argv.size();
+	new_argv = new char *[new_argc+1];
+
+	for (int i = 0; i < new_argc; i++)
+	{
+		new_argv[i] = new char[temp_argv[i].length() + 1];
+		strcpy(new_argv[i], temp_argv[i].c_str());
+	}
+
+	new_argv[new_argc] = NULL;
+}
+
+#endif // __vita__
+
 static int love_preload(lua_State *L, lua_CFunction f, const char *name)
 {
 	lua_getglobal(L, "package");
@@ -173,6 +209,14 @@ static DoneAction runlove(int argc, char **argv, int &retval)
 	argc = hack_argc;
 	argv = hack_argv;
 #endif // LOVE_LEGENDARY_APP_ARGV_HACK
+
+#ifdef __vita__
+	int hack_argc = 0;
+	char **hack_argv = nullptr;
+	set_app_arguments(argc, argv, hack_argc, hack_argv);
+	argc = hack_argc;
+	argv = hack_argv;
+#endif // __vita__
 
 	// Add love to package.preload for easy requiring.
 	love_preload(L, luaopen_love, "love");
@@ -244,7 +288,7 @@ static DoneAction runlove(int argc, char **argv, int &retval)
 
 	lua_close(L);
 
-#if defined(LOVE_LEGENDARY_APP_ARGV_HACK) && !defined(LOVE_IOS)
+#if (defined(LOVE_LEGENDARY_APP_ARGV_HACK) || defined(__vita__)) && !defined(LOVE_IOS)
 	if (hack_argv)
 	{
 		for (int i = 0; i<hack_argc; ++i)

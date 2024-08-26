@@ -19,6 +19,8 @@
  **/
 
 // LOVE
+#define _POSIX_C_SOURCE 200809
+
 #include "EXRHandler.h"
 #include "common/floattypes.h"
 #include "common/Exception.h"

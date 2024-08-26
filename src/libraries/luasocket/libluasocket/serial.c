@@ -12,8 +12,9 @@
 #include "socket.h"
 #include "options.h"
 #include "unix.h"
+#ifndef __vita__
 #include <sys/un.h>
-
+#endif
 /*
 Reuses userdata definition from unix.h, since it is useful for all
 stream-like objects.

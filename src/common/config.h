@@ -34,7 +34,7 @@
 #		endif
 #	endif
 #endif
-#if defined(linux) || defined(__linux) || defined(__linux__)
+#if defined(linux) || defined(__linux) || defined(__linux__) || defined(__vita__)
 #	define LOVE_LINUX 1
 #endif
 #if defined(__ANDROID__)

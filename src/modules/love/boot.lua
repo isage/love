@@ -57,7 +57,7 @@ function love.boot()
 	invalid_game_path = nil
 
 	-- Is this one of those fancy "fused" games?
-	local can_has_game = pcall(love.filesystem.setSource, exepath)
+	local can_has_game = false --pcall(love.filesystem.setSource, exepath)
 
 	-- It's a fused game, don't parse --game argument
 	if can_has_game then
@@ -84,6 +84,7 @@ function love.boot()
 		end
 
 		local full_source = love.path.getFull(nouri)
+		print(full_source)
 		can_has_game = pcall(love.filesystem.setSource, full_source)
 
 		if not can_has_game then
@@ -132,8 +133,8 @@ function love.init()
 		title = "Untitled",
 		version = love._version,
 		window = {
-			width = 800,
-			height = 600,
+			width = 960,
+			height = 544,
 			x = nil,
 			y = nil,
 			minwidth = 1,

@@ -94,6 +94,8 @@ std::string Filesystem::getExecutablePath() const
 {
 #if defined(LOVE_MACOSX)
 	return love::macosx::getExecutablePath();
+#elif defined(__vita__)
+    return std::string("app0:/");
 #elif defined(LOVE_IOS)
 	return love::ios::getExecutablePath();
 #elif defined(LOVE_WINDOWS)

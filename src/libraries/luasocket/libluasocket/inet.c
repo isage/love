@@ -354,10 +354,12 @@ static void inet_pushresolved(lua_State *L, struct hostent *hp)
 \*-------------------------------------------------------------------------*/
 const char *inet_trycreate(p_socket ps, int family, int type, int protocol) {
     const char *err = socket_strerror(socket_create(ps, family, type, protocol));
+#ifndef __vita__
     if (err == NULL && family == AF_INET6) {
         int yes = 1;
         setsockopt(*ps, IPPROTO_IPV6, IPV6_V6ONLY, (void *)&yes, sizeof(yes));
     }
+#endif
     return err;
 }
 
@@ -375,6 +377,7 @@ const char *inet_trydisconnect(p_socket ps, int family, p_timeout tm)
             return socket_strerror(socket_connect(ps, (SA *) &sin,
                 sizeof(sin), tm));
         }
+#ifndef __vita__
         case AF_INET6: {
             struct sockaddr_in6 sin6;
             struct in6_addr addrany = IN6ADDR_ANY_INIT;
@@ -384,6 +387,7 @@ const char *inet_trydisconnect(p_socket ps, int family, p_timeout tm)
             return socket_strerror(socket_connect(ps, (SA *) &sin6,
                 sizeof(sin6), tm));
         }
+#endif
     }
     return NULL;
 }

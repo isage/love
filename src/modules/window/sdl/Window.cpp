@@ -209,9 +209,9 @@ std::vector<Window::ContextAttribs> Window::getContextAttribsList() const
 
 	bool preferGLES = false;
 
-#ifdef LOVE_GRAPHICS_USE_OPENGLES
+//#ifdef LOVE_GRAPHICS_USE_OPENGLES
 	preferGLES = true;
-#endif
+//#endif
 
 	const char *curdriver = SDL_GetCurrentVideoDriver();
 	const char *glesdrivers[] = {"RPI", "Android", "uikit", "winrt", "emscripten"};
